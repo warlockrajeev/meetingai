@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 
-export default function UploadAudio({ onResult }) {
+export default function UploadMedia({ onResult }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -10,8 +10,8 @@ export default function UploadAudio({ onResult }) {
   const [progress, setProgress] = useState("");
   const fileInputRef = useRef(null);
 
-  const ALLOWED_EXTENSIONS = ["mp3", "wav", "m4a", "ogg", "webm", "flac"];
-  const MAX_SIZE = 25 * 1024 * 1024; // 25MB
+  const ALLOWED_EXTENSIONS = ["mp3", "wav", "m4a", "ogg", "webm", "flac", "mp4", "mov"];
+  const MAX_SIZE = 50 * 1024 * 1024; // Increased to 50MB for video
 
   function validateFile(f) {
     const ext = f.name.split(".").pop().toLowerCase();
@@ -19,7 +19,7 @@ export default function UploadAudio({ onResult }) {
       return `Unsupported format ".${ext}". Allowed: ${ALLOWED_EXTENSIONS.join(", ")}`;
     }
     if (f.size > MAX_SIZE) {
-      return `File too large (${(f.size / 1024 / 1024).toFixed(1)}MB). Max: 25MB`;
+      return `File too large (${(f.size / 1024 / 1024).toFixed(1)}MB). Max: 50MB`;
     }
     return null;
   }
@@ -40,13 +40,13 @@ export default function UploadAudio({ onResult }) {
 
     setLoading(true);
     setError("");
-    setProgress("Uploading audio...");
+    setProgress("Uploading media...");
 
     try {
       const formData = new FormData();
-      formData.append("audio", file);
+      formData.append("media", file);
 
-      setProgress("Transcribing with AI...");
+      setProgress("Analyzing with AI...");
 
       const token = localStorage.getItem("token");
       const res = await fetch("/api/process", {
@@ -58,7 +58,7 @@ export default function UploadAudio({ onResult }) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Processing failed");
+      if (!res.ok) throw new Error(data.error || "Analysis failed");
 
       setProgress("Generating report...");
       setTimeout(() => {
@@ -91,22 +91,33 @@ export default function UploadAudio({ onResult }) {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".mp3,.wav,.m4a,.ogg,.webm,.flac"
+          accept="audio/*,video/*"
           onChange={(e) => e.target.files[0] && handleFileSelect(e.target.files[0])}
           className="hidden"
         />
 
         <div className="flex flex-col items-center">
-          <div className="w-14 h-14 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
-            <svg className="w-6 h-6 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
+          <div className="w-14 h-14 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm text-zinc-400">
+            {file && (file.type.startsWith('video') ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+              </svg>
+            ))}
+            {!file && (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            )}
           </div>
           <h3 className="text-lg font-bold text-white mb-2">
-            {file ? "File Selected" : "Upload Meeting Recording"}
+            {file ? "File Selected" : "Upload Meeting Media"}
           </h3>
           <p className="text-zinc-500 text-sm max-w-[280px] mx-auto">
-            {file ? file.name : "Drag and drop or click to browse (MP3, WAV, M4A up to 25MB)"}
+            {file ? file.name : "Audio or Video recordings up to 50MB (MP4, MOV, MP3, etc.)"}
           </p>
         </div>
       </div>
@@ -122,7 +133,7 @@ export default function UploadAudio({ onResult }) {
 
       {file && !loading && (
         <button onClick={handleUpload} className="btn-primary w-full shadow-md">
-          Analyze Meeting
+          Analyze Recording
         </button>
       )}
 
@@ -131,7 +142,7 @@ export default function UploadAudio({ onResult }) {
           <div className="flex flex-col items-center">
             <div className="spinner mb-4"></div>
             <p className="text-zinc-200 font-bold">{progress}</p>
-            <p className="text-zinc-500 text-xs">Gemini AI is processing your audio...</p>
+            <p className="text-zinc-500 text-xs text-balance">AI is processing your media. This may take a minute for videos.</p>
           </div>
           <div className="w-full bg-zinc-800 rounded-full h-1 overflow-hidden">
             <div className="h-full bg-primary animate-pulse w-full"></div>

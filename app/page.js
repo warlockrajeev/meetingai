@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import UploadAudio from "@/components/UploadAudio";
+import UploadMedia from "@/components/UploadMedia";
 import ResultDisplay from "@/components/ResultDisplay";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -44,7 +44,7 @@ export default function HomePage() {
 
       {/* Main Content Area */}
       <div className="max-w-2xl mx-auto">
-        <UploadAudio onResult={setResult} />
+        <UploadMedia onResult={setResult} />
         
         {result && (
           <div id="results-section" className="scroll-mt-20">

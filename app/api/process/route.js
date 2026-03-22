@@ -8,34 +8,46 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Map file extensions to MIME types
 const MIME_MAP = {
+  // Audio
   mp3: "audio/mpeg",
   wav: "audio/wav",
   m4a: "audio/mp4",
   ogg: "audio/ogg",
   webm: "audio/webm",
   flac: "audio/flac",
+  // Video
+  mp4: "video/mp4",
+  mpeg: "video/mpeg",
+  mov: "video/quicktime",
+  avi: "video/x-msvideo",
+  mpg: "video/mpeg",
+  "3gp": "video/3gpp",
 };
 
 function getMimeType(fileName) {
   const ext = fileName.split(".").pop().toLowerCase();
-  return MIME_MAP[ext] || "audio/mpeg";
+  if (MIME_MAP[ext]) return MIME_MAP[ext];
+  
+  // Default fallbacks based on prefix if extension is weird
+  if (["mp4", "mov", "avi", "mpg", "mpeg", "webm", "3gp"].includes(ext)) return `video/${ext === 'mov' ? 'quicktime' : ext}`;
+  return "audio/mpeg";
 }
 
 /**
- * Transcribe audio using Gemini's native audio understanding.
+ * Transcribe media (audio or video) using Gemini's native understanding.
  */
-async function transcribeAudio(base64Audio, mimeType) {
+async function transcribeMedia(base64Data, mimeType) {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const result = await model.generateContent([
     {
       inlineData: {
         mimeType,
-        data: base64Audio,
+        data: base64Data,
       },
     },
     {
-      text: "Please transcribe this audio recording verbatim. Include all spoken words, noting different speakers if distinguishable. Output only the transcription text, nothing else.",
+      text: "Please transcribe the spoken content from this media recording verbatim. Include all spoken words, noting different speakers if distinguishable. Output only the transcription text, nothing else.",
     },
   ]);
 
@@ -126,17 +138,17 @@ export async function POST(request) {
     }
 
     const formData = await request.formData();
-    const audioFile = formData.get("audio");
+    const mediaFile = formData.get("media") || formData.get("audio");
 
-    if (!audioFile) {
+    if (!mediaFile) {
       return NextResponse.json(
-        { error: "No audio file provided" },
+        { error: "No media file (audio or video) provided" },
         { status: 400 }
       );
     }
 
     // Validate file type
-    const fileName = audioFile.name || "audio.mp3";
+    const fileName = mediaFile.name || "recording.mp3";
     const ext = fileName.split(".").pop().toLowerCase();
     const allowedExtensions = Object.keys(MIME_MAP);
 
@@ -148,17 +160,17 @@ export async function POST(request) {
     }
 
     // Convert file to base64
-    const bytes = await audioFile.arrayBuffer();
+    const bytes = await mediaFile.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64Audio = buffer.toString("base64");
+    const base64Data = buffer.toString("base64");
     const mimeType = getMimeType(fileName);
 
-    // Step 1: Transcribe audio with Gemini
-    const transcript = await transcribeAudio(base64Audio, mimeType);
+    // Step 1: Transcribe media with Gemini
+    const transcript = await transcribeMedia(base64Data, mimeType);
 
     if (!transcript || transcript.trim().length === 0) {
       return NextResponse.json(
-        { error: "Failed to transcribe audio. The file may be empty or corrupted." },
+        { error: "Failed to transcribe recording. The file may be empty or has no clear speech." },
         { status: 422 }
       );
     }
@@ -204,13 +216,13 @@ export async function POST(request) {
 
     if (error.message?.includes("too large") || error.message?.includes("size")) {
       return NextResponse.json(
-        { error: "Audio file is too large. Please upload a smaller file (under 20MB)." },
+        { error: "File is too large. Please upload a smaller file (under 20MB)." },
         { status: 413 }
       );
     }
 
     return NextResponse.json(
-      { error: error.message || "An unexpected error occurred while processing your audio." },
+      { error: error.message || "An unexpected error occurred while processing your recording." },
       { status: 500 }
     );
   }
