@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
-/* ========== Custom Theme Tokens ========== */
+/* ========== Professional Design System (Slate/Zinc) ========== */
 @theme inline {
-  --color-background: #0a0b14;
-  --color-surface: #12131f;
-  --color-surface-hover: #1a1b2e;
-  --color-border: #1e2035;
-  --color-border-light: #2a2d4a;
-  --color-primary: #6366f1;
-  --color-primary-light: #818cf8;
-  --color-primary-dark: #4f46e5;
-  --color-accent: #06b6d4;
-  --color-accent-light: #22d3ee;
+  --color-background: #09090b;
+  --color-surface: #18181b;
+  --color-surface-hover: #27272a;
+  --color-border: #27272a;
+  --color-border-light: #3f3f46;
+  --color-primary: #3b82f6; /* Professional Blue */
+  --color-primary-light: #60a5fa;
+  --color-primary-dark: #2563eb;
+  --color-accent: #10b981; /* Professional Emerald */
+  --color-accent-light: #34d399;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
-  --color-text: #e2e8f0;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
+  --color-text: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -25,132 +25,110 @@
 /* ========== Base Styles ========== */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border-light) transparent;
+  scrollbar-color: var(--color-border) transparent;
 }
 
 html {
   color-scheme: dark;
-  background: #0a0b14;
+  background: #09090b;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: #0a0b14;
-  color: #e2e8f0;
+  background: #09090b;
+  color: #fafafa;
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ========== Glass Card ========== */
-.glass-card {
-  background: linear-gradient(
-    135deg,
-    rgba(18, 19, 31, 0.8) 0%,
-    rgba(26, 27, 46, 0.6) 100%
-  );
-  backdrop-filter: blur(20px);
+/* ========== Professional Card (Structured) ========== */
+.pro-card {
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.glass-card:hover {
+.pro-card:hover {
   border-color: var(--color-border-light);
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
 
-/* ========== Gradient Text ========== */
+/* ========== Subdued Gradient Text ========== */
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent));
+  background: linear-gradient(to right, #ffffff, #a1a1aa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ========== Upload Zone ========== */
+/* ========== Professional Dropzone ========== */
 .upload-zone {
-  border: 2px dashed var(--color-border-light);
-  border-radius: 16px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.upload-zone::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(99, 102, 241, 0.05) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.upload-zone:hover::before,
-.upload-zone.drag-over::before {
-  opacity: 1;
+  border: 2px dashed var(--color-border);
+  background: rgba(24, 24, 27, 0.5);
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
 
 .upload-zone:hover,
 .upload-zone.drag-over {
   border-color: var(--color-primary);
-  background: rgba(99, 102, 241, 0.04);
+  background: rgba(59, 130, 246, 0.03);
 }
 
-/* ========== Pulse Animation ========== */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-  50% { box-shadow: 0 0 20px 8px rgba(99, 102, 241, 0.15); }
+/* ========== Action Button ========== */
+.btn-action {
+  @apply inline-flex items-center justify-center px-6 py-2.5 rounded-lg font-semibold transition-all duration-200;
 }
 
-.pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  border: 1px solid var(--color-primary-dark);
 }
 
-/* ========== Spinner ========== */
-@keyframes spin-slow {
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-light);
+}
+
+/* ========== Spinner (Leaner) ========== */
+@keyframes spin {
   to { transform: rotate(360deg); }
 }
 
 .spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: white;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
-  animation: spin-slow 0.8s linear infinite;
+  animation: spin 0.6s linear infinite;
 }
 
-/* ========== Shimmer Effect  ========== */
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+/* ========== Clean Transitions ========== */
+.fade-up {
+  animation: fade-up 0.4s ease-out forwards;
 }
 
-.shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(99, 102, 241, 0.06) 50%,
-    transparent 100%
-  );
-  animation: shimmer 2s ease-in-out infinite;
-}
-
-/* ========== Section Fade-in ========== */
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -158,69 +136,19 @@ body {
   }
 }
 
-.fade-up {
-  animation: fade-up 0.5s ease-out forwards;
+/* ========== Typography Utilities ========== */
+.text-balance {
+  text-wrap: balance;
 }
 
-.fade-up-delay-1 { animation-delay: 0.1s; opacity: 0; }
-.fade-up-delay-2 { animation-delay: 0.2s; opacity: 0; }
-.fade-up-delay-3 { animation-delay: 0.3s; opacity: 0; }
-.fade-up-delay-4 { animation-delay: 0.4s; opacity: 0; }
-
-/* ========== Button Styles ========== */
-.btn-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: white;
-  padding: 12px 28px;
-  border-radius: 12px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+.heading-lg {
+  @apply text-4xl sm:text-5xl font-bold tracking-tight text-white mb-4;
 }
 
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+.subheading {
+  @apply text-lg text-zinc-400 max-w-2xl mx-auto;
 }
 
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ========== Nav Glass ========== */
-.nav-glass {
-  background: rgba(10, 11, 20, 0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--color-border);
-}
-
-/* ========== Tag / Badge ========== */
-.tag {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--color-primary-light);
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid rgba(99, 102, 241, 0.2);
-}
-
-/* ========== Scrollbar ========== */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border-light);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
-}
+/* Legacy support/redirects for existing class names */
+.glass-card { @extend .pro-card; }
+.btn-primary { @extend .btn-action; }

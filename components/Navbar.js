@@ -14,72 +14,74 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="nav-glass sticky top-0 z-50">
+    <nav className="sticky top-0 z-50 bg-background border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-primary/25 transition-shadow">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shadow-sm group-hover:bg-white transition-colors">
+              <svg className="w-5 h-5 text-zinc-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
               </svg>
             </div>
-            <span className="text-lg font-bold gradient-text hidden sm:inline">
+            <span className="text-md font-bold tracking-tight text-white hidden sm:inline">
               MeetingAI
             </span>
           </Link>
 
           {/* Navigation Links */}
-          <div className="flex items-center gap-1">
-            {links.map(({ href, label, icon: Icon }) => {
-              const isActive = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    isActive
-                      ? "bg-primary/10 text-primary-light border border-primary/20"
-                      : "text-text-secondary hover:text-text hover:bg-surface-hover"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{label}</span>
-                </Link>
-              );
-            })}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              {links.map(({ href, label, icon: Icon }) => {
+                const isActive = pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                      isActive
+                        ? "text-white bg-zinc-800"
+                        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{label}</span>
+                  </Link>
+                );
+              })}
+            </div>
 
-            <div className="h-6 w-px bg-border mx-2 hidden sm:block"></div>
+            <div className="h-4 w-px bg-zinc-800 mx-1 hidden sm:block"></div>
 
             {user ? (
-              <div className="flex items-center gap-3 ml-2">
-                <div className="hidden md:block text-right">
-                  <p className="text-sm font-semibold text-text line-clamp-1">{user.name}</p>
-                  <p className="text-xs text-text-muted line-clamp-1">{user.email}</p>
+              <div className="flex items-center gap-4">
+                <div className="hidden md:flex flex-col items-end">
+                  <span className="text-xs font-semibold text-zinc-200 max-w-[120px] truncate">{user.name}</span>
+                  <span className="text-[10px] text-zinc-500 max-w-[120px] truncate">{user.email}</span>
                 </div>
                 <button
                   onClick={logout}
-                  className="p-2 rounded-xl text-text-secondary hover:text-danger hover:bg-danger/10 transition-all ml-1"
+                  className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-red-950/20 transition-all border border-transparent hover:border-red-900/30"
                   title="Logout"
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 ml-2">
+              <div className="flex items-center gap-3">
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-text-secondary hover:text-text px-4 py-2 transition-all"
+                  className="text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-all"
                 >
-                  Login
+                  Log in
                 </Link>
                 <Link
                   href="/signup"
-                  className="bg-primary hover:bg-primary-dark text-white text-sm font-semibold px-5 py-2 rounded-xl transition-all shadow-lg shadow-primary/20"
+                  className="bg-zinc-100 hover:bg-white text-zinc-900 text-sm font-bold px-4 py-1.5 rounded-md transition-all shadow-sm"
                 >
-                  Sign Up
+                  Get Started
                 </Link>
               </div>
             )}

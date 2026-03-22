@@ -34,70 +34,72 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-20 fade-up">
-      <div className="glass-card p-8">
+    <div className="max-w-md mx-auto px-4 py-24 sm:py-32 fade-up">
+      <div className="pro-card p-10 bg-zinc-900/10">
         <div className="text-center mb-10">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg mb-6">
-            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-9-4.5h.008v.008H6V4.5zM15 18a3 3 0 10-6 0 3 3 0 006 0zm-2-12a2 2 0 11-4 0 2 2 0 014 0z" />
+          <div className="w-16 h-16 mx-auto rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6 shadow-sm">
+            <svg className="w-8 h-8 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-9-4.5h.008v.008H6V4.5zM15 18a3 3 0 11-6 0 3 3 0 016 0zm-2-12a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold gradient-text">Create Account</h1>
-          <p className="text-text-secondary mt-2">Join MeetingAI today</p>
+          <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Create Identity</h1>
+          <p className="text-zinc-500 text-sm">Join the next generation of meeting analysis.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary ml-1">Full Name</label>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Full Name</label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-surface border border-border focus:border-primary px-4 py-3 rounded-xl outline-none transition-all text-text"
-              placeholder="John Doe"
+              className="w-full bg-zinc-900 border border-zinc-800 focus:border-primary/50 px-4 py-2.5 rounded-lg outline-none transition-all text-white text-sm"
+              placeholder="Alex Rivera"
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary ml-1">Email Address</label>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Work Email</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-surface border border-border focus:border-primary px-4 py-3 rounded-xl outline-none transition-all text-text"
-              placeholder="you@example.com"
+              className="w-full bg-zinc-900 border border-zinc-800 focus:border-primary/50 px-4 py-2.5 rounded-lg outline-none transition-all text-white text-sm"
+              placeholder="alex@company.com"
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary ml-1">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-surface border border-border focus:border-primary px-4 py-3 rounded-xl outline-none transition-all text-text"
-              placeholder="••••••••"
-            />
-          </div>
+          <div className="grid grid-cols-1 gap-5">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Security Key</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-zinc-900 border border-zinc-800 focus:border-primary/50 px-4 py-2.5 rounded-lg outline-none transition-all text-white text-sm"
+                placeholder="••••••••"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary ml-1">Confirm Password</label>
-            <input
-              type="password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-surface border border-border focus:border-primary px-4 py-3 rounded-xl outline-none transition-all text-text"
-              placeholder="••••••••"
-            />
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Confirm Key</label>
+              <input
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full bg-zinc-900 border border-zinc-800 focus:border-primary/50 px-4 py-2.5 rounded-lg outline-none transition-all text-white text-sm"
+                placeholder="••••••••"
+              />
+            </div>
           </div>
 
           {error && (
-            <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm flex items-center gap-3">
-              <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <div className="p-3 rounded-lg bg-red-950/20 border border-red-900/30 text-red-400 text-xs flex items-center gap-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
               </svg>
               <span>{error}</span>
@@ -107,23 +109,16 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary w-full flex items-center justify-center gap-2 mt-4"
+            className="btn-primary w-full shadow-md mt-2"
           >
-            {isSubmitting ? (
-              <>
-                <div className="spinner"></div>
-                Creating account...
-              </>
-            ) : (
-              "Sign Up"
-            )}
+            {isSubmitting ? "Processing..." : "Register Account"}
           </button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-text-secondary">
-          Already have an account?{" "}
-          <Link href="/login" className="text-primary-light font-semibold hover:underline">
-            Log in
+        <div className="mt-10 text-center text-xs text-zinc-500">
+          Already registered?{" "}
+          <Link href="/login" className="text-white font-bold hover:underline">
+            Member login
           </Link>
         </div>
       </div>

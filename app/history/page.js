@@ -31,7 +31,6 @@ export default function HistoryPage() {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || "Failed to fetch");
-
       setMeetings(data.data || []);
     } catch (err) {
       setError(err.message);
@@ -45,40 +44,26 @@ export default function HistoryPage() {
       month: "short",
       day: "numeric",
       year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     });
   }
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center">
-            <div className="spinner"></div>
-          </div>
-          <p className="text-text-secondary">Loading meeting history...</p>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 py-20 flex flex-col items-center">
+        <div className="spinner mb-4"></div>
+        <p className="text-zinc-500 text-sm">Loading history...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="glass-card p-8 text-center">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-danger/10 flex items-center justify-center mb-4">
-            <svg className="w-7 h-7 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-            </svg>
-          </div>
-          <p className="text-danger font-semibold mb-2">Failed to load history</p>
-          <p className="text-text-secondary text-sm">{error}</p>
-          <button
-            onClick={() => { setLoading(true); setError(""); fetchMeetings(); }}
-            className="btn-primary mt-4 text-sm"
-          >
-            Try Again
+      <div className="max-w-2xl mx-auto px-4 py-20">
+        <div className="pro-card p-8 border-red-900/30 text-center">
+          <p className="text-red-400 font-bold mb-2">Sync Error</p>
+          <p className="text-zinc-500 text-sm mb-6">{error}</p>
+          <button onClick={() => { setLoading(true); fetchMeetings(); }} className="btn-secondary text-xs">
+            Retry Connection
           </button>
         </div>
       </div>
@@ -86,133 +71,91 @@ export default function HistoryPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
-      <div className="mb-8 fade-up">
-        <h1 className="text-3xl sm:text-4xl font-bold gradient-text mb-2">
-          Meeting History
-        </h1>
-        <p className="text-text-secondary">
-          {meetings.length} meeting{meetings.length !== 1 ? "s" : ""} processed
-        </p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="mb-12 flex items-end justify-between border-b border-zinc-900 pb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Meeting History</h1>
+          <p className="text-zinc-500 text-sm">Manage and review your processed recordings.</p>
+        </div>
+        <div className="text-right">
+          <span className="text-2xl font-bold text-white">{meetings.length}</span>
+          <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">Processed</p>
+        </div>
       </div>
 
       {meetings.length === 0 ? (
-        <div className="glass-card p-12 text-center fade-up">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-            <svg className="w-8 h-8 text-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-            </svg>
-          </div>
-          <p className="text-text font-semibold text-lg mb-1">No meetings yet</p>
-          <p className="text-text-secondary">Upload your first audio file to get started.</p>
+        <div className="pro-card p-16 text-center bg-zinc-900/10 border-dashed">
+          <p className="text-zinc-400 font-semibold mb-1">No history found</p>
+          <p className="text-zinc-600 text-sm mb-8">Process your first recording to see it here.</p>
+          <button onClick={() => router.push("/")} className="btn-primary text-sm px-8">
+            Start New Analysis
+          </button>
         </div>
       ) : (
-        <div className="space-y-4">
-          {meetings.map((meeting, index) => {
+        <div className="space-y-3">
+          {meetings.map((meeting) => {
             const isExpanded = expandedId === meeting._id;
             return (
-              <div
-                key={meeting._id}
-                className="glass-card overflow-hidden fade-up"
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                {/* Card Header (always visible) */}
+              <div key={meeting._id} className={`pro-card overflow-hidden ${isExpanded ? "border-primary/50 ring-1 ring-primary/20" : ""}`}>
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : meeting._id)}
-                  className="w-full p-6 text-left flex items-center justify-between hover:bg-surface-hover/50 transition-colors"
-                  id={`meeting-card-${meeting._id}`}
+                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-zinc-800/30 transition-colors"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                        </svg>
-                      </div>
-                      <span className="font-semibold text-text truncate">
-                        {meeting.fileName || "Untitled Meeting"}
-                      </span>
-                      <span className="text-text-muted text-xs flex-shrink-0">
-                        {formatDate(meeting.createdAt)}
-                      </span>
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isExpanded ? "bg-primary text-white" : "bg-zinc-900 border border-zinc-800 text-zinc-400"}`}>
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+                      </svg>
                     </div>
-                    <p className="text-text-secondary text-sm line-clamp-2 ml-11">
-                      {meeting.summary}
-                    </p>
+                    <div className="text-left truncate">
+                      <p className="text-sm font-bold text-white truncate">{meeting.fileName || "Unnamed Meeting"}</p>
+                      <p className="text-xs text-zinc-500">{formatDate(meeting.createdAt)}</p>
+                    </div>
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-text-muted flex-shrink-0 ml-4 transition-transform duration-300 ${
-                      isExpanded ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
+                  <svg className={`w-4 h-4 text-zinc-600 transition-transform ${isExpanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                   </svg>
                 </button>
 
-                {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="px-6 pb-6 space-y-5 border-t border-border">
-                    {/* Summary */}
-                    <div className="pt-5">
-                      <h4 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-2">
-                        Summary
-                      </h4>
-                      <p className="text-text-secondary leading-relaxed">
-                        {meeting.summary}
-                      </p>
-                    </div>
-
-                    {/* Key Points */}
+                  <div className="px-6 py-6 bg-zinc-900/20 border-t border-zinc-800 space-y-6">
                     <div>
-                      <h4 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-2">
-                        Key Points
-                      </h4>
-                      <ul className="space-y-2">
-                        {meeting.keyPoints?.map((point, i) => (
-                          <li key={i} className="flex items-start gap-2 text-text-secondary text-sm">
-                            <span className="w-5 h-5 rounded bg-accent/10 flex items-center justify-center text-accent text-xs font-bold flex-shrink-0 mt-0.5">
-                              {i + 1}
-                            </span>
-                            <span>{point}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Summary</h4>
+                      <p className="text-zinc-300 text-sm leading-relaxed">{meeting.summary}</p>
                     </div>
-
-                    {/* Action Items */}
-                    <div>
-                      <h4 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-2">
-                        Action Items
-                      </h4>
-                      <ul className="space-y-2">
-                        {meeting.actionItems?.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2 text-text-secondary text-sm">
-                            <span className="w-5 h-5 rounded bg-success/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <svg className="w-3 h-3 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                              </svg>
-                            </span>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Transcript */}
-                    <div>
-                      <h4 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-2">
-                        Transcript
-                      </h4>
-                      <div className="bg-surface rounded-xl p-4 max-h-64 overflow-y-auto">
-                        <p className="text-text-secondary text-sm leading-relaxed whitespace-pre-wrap">
-                          {meeting.transcript}
-                        </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Key Notes</h4>
+                        <ul className="space-y-2">
+                          {meeting.keyPoints?.slice(0, 5).map((p, i) => (
+                            <li key={i} className="text-xs text-zinc-400 flex gap-2">
+                              <span className="text-primary">•</span>
+                              <span>{p}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
+                      <div>
+                        <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Next Steps</h4>
+                        <ul className="space-y-2">
+                          {meeting.actionItems?.slice(0, 5).map((a, i) => (
+                            <li key={i} className="text-xs text-zinc-400 flex gap-2">
+                              <span className="text-emerald-500">✓</span>
+                              <span>{a}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 flex justify-end">
+                      <button 
+                        onClick={() => router.push("/") /* This would ideally navigate to a detail view with the result */}
+                        className="btn-secondary text-[10px] uppercase font-bold tracking-widest"
+                      >
+                        View Full Report
+                      </button>
                     </div>
                   </div>
                 )}

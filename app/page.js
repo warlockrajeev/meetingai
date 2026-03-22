@@ -26,28 +26,40 @@ export default function HomePage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
       {/* Hero Section */}
-      <div className="text-center mb-10 fade-up">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
-          <svg className="w-4 h-4 text-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-          </svg>
-          <span className="text-primary-light text-sm font-medium">Powered by Gemini AI</span>
+      <div className="text-center mb-16 fade-up">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 mb-8">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+          <span className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">Powered by Gemini AI</span>
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold gradient-text mb-4">
-          Meeting Notes, Simplified
+        <h1 className="heading-lg text-balance">
+          Intelligent Meeting <br className="hidden sm:block" />
+          <span className="text-zinc-500">Insights for Professionals.</span>
         </h1>
-        <p className="text-text-secondary text-lg max-w-xl mx-auto">
-          Upload your meeting audio and let AI transcribe, summarize, and extract action items in seconds.
+        <p className="subheading">
+          Transcribe, summarize, and extract action items from your recordings with high precision. Seamlessly manage your meeting history.
         </p>
       </div>
 
-      {/* Upload Section */}
-      <UploadAudio onResult={setResult} />
+      {/* Main Content Area */}
+      <div className="max-w-2xl mx-auto">
+        <UploadAudio onResult={setResult} />
+        
+        {result && (
+          <div id="results-section" className="scroll-mt-20">
+            <ResultDisplay data={result} />
+          </div>
+        )}
+      </div>
 
-      {/* Results */}
-      <ResultDisplay data={result} />
+      {/* Trust Quote / Footer Hint */}
+      <div className="mt-32 border-t border-zinc-900 pt-8 text-center text-zinc-600">
+        <p className="text-xs font-medium uppercase tracking-widest mb-4">Secure & Private</p>
+        <p className="text-[10px] max-w-sm mx-auto leading-relaxed">
+          Your data is processed securely and is only accessible to you. We use enterprise-grade encryption for all storage.
+        </p>
+      </div>
     </div>
   );
 }

@@ -26,46 +26,46 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-20 fade-up">
-      <div className="glass-card p-8">
+    <div className="max-w-md mx-auto px-4 py-24 sm:py-32 fade-up">
+      <div className="pro-card p-10 bg-zinc-900/10">
         <div className="text-center mb-10">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg mb-6">
-            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          <div className="w-16 h-16 mx-auto rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-6 shadow-sm">
+            <svg className="w-8 h-8 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold gradient-text">Welcome Back</h1>
-          <p className="text-text-secondary mt-2">Log in to your MeetingAI account</p>
+          <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Access Account</h1>
+          <p className="text-zinc-500 text-sm">Secure login to your meeting insights.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary ml-1">Email Address</label>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Work Email</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-surface border border-border focus:border-primary px-4 py-3 rounded-xl outline-none transition-all text-text"
-              placeholder="you@example.com"
+              className="w-full bg-zinc-900 border border-zinc-800 focus:border-primary/50 px-4 py-3 rounded-lg outline-none transition-all text-white text-sm"
+              placeholder="name@company.com"
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-text-secondary ml-1">Password</label>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Security Key</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-surface border border-border focus:border-primary px-4 py-3 rounded-xl outline-none transition-all text-text"
+              className="w-full bg-zinc-900 border border-zinc-800 focus:border-primary/50 px-4 py-3 rounded-lg outline-none transition-all text-white text-sm"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm flex items-center gap-3">
-              <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <div className="p-3 rounded-lg bg-red-950/20 border border-red-900/30 text-red-400 text-xs flex items-center gap-2">
+              <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
               </svg>
               <span>{error}</span>
@@ -75,23 +75,16 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn-primary w-full flex items-center justify-center gap-2"
+            className="btn-primary w-full shadow-md"
           >
-            {isSubmitting ? (
-              <>
-                <div className="spinner"></div>
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
-            )}
+            {isSubmitting ? "Authenticating..." : "Sign In"}
           </button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-text-secondary">
-          Don't have an account?{" "}
-          <Link href="/signup" className="text-primary-light font-semibold hover:underline">
-            Sign up
+        <div className="mt-10 text-center text-xs text-zinc-500">
+          New to MeetingAI?{" "}
+          <Link href="/signup" className="text-white font-bold hover:underline">
+            Create an account
           </Link>
         </div>
       </div>
