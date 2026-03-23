@@ -19,7 +19,13 @@ export default function ResultDisplay({ data }) {
 
   if (!data) return null;
 
-  const { summary, keyPoints, actionItems, timestamps, transcript, fileName, createdAt } = data;
+  const { summary, keyPoints, actionItems, timestamps, sentiment, transcript, fileName, createdAt } = data;
+
+  const sentimentColors = {
+    Positive: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    Negative: "text-red-400 bg-red-500/10 border-red-500/20",
+    Neutral: "text-zinc-400 bg-zinc-500/10 border-zinc-500/20",
+  };
 
   const handleTranslate = async () => {
     setIsTranslating(true);
@@ -79,11 +85,13 @@ export default function ResultDisplay({ data }) {
     <div className="mt-12 space-y-8 fade-up pb-20">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
-        <div>
+        <div className="flex items-center gap-3">
           <h2 className="text-xl font-bold text-white mb-1">Analysis Result</h2>
-          <p className="text-zinc-500 text-sm">
-            {fileName} • {new Date(createdAt).toLocaleDateString()}
-          </p>
+          {sentiment && (
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border ${sentimentColors[sentiment.overall] || sentimentColors.Neutral}`}>
+              {sentiment.overall}
+            </span>
+          )}
         </div>
         <button
           onClick={() => window.print()}
@@ -105,9 +113,14 @@ export default function ResultDisplay({ data }) {
             </svg>
             <span className="text-xs font-bold uppercase tracking-wider">Executive Summary</span>
           </div>
-          <p className="text-zinc-200 leading-relaxed text-md mb-6">
+          <p className="text-zinc-200 leading-relaxed text-md mb-2">
             {summary}
           </p>
+          {sentiment?.reason && (
+            <p className="text-zinc-500 text-xs italic opacity-80 mb-6 font-medium">
+              Tone: {sentiment.reason}
+            </p>
+          )}
 
           {/* Translation UI */}
           <div className="border-t border-zinc-800 pt-6 mt-4">

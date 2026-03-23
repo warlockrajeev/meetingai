@@ -73,12 +73,17 @@ FORMAT:
   "summary": "A concise 2-4 sentence summary of the meeting.",
   "keyPoints": ["Key point 1", "Key point 2", "Key point 3"],
   "actionItems": ["Action item 1", "Action item 2", "Action item 3"],
-  "timestamps": ["MM:SS - Introduction", "MM:SS - Main topic discussion", "MM:SS - Conclusion"]
+  "timestamps": ["MM:SS - Introduction", "MM:SS - Main topic discussion", "MM:SS - Conclusion"],
+  "sentiment": {
+    "overall": "Positive | Neutral | Negative",
+    "reason": "Brief explanation for the detected sentiment."
+  }
 }
 
 RULES:
 - Provide 3-5 specific timestamps with descriptions based on the transcript's logical flow.
 - If there are no clear action items, use ["No specific action items identified"].
+- For sentiment, choose exactly one of: Positive, Neutral, Negative.
 - Ensure the JSON is valid and properly escaped.`;
 
   const result = await model.generateContent(prompt);
@@ -100,6 +105,7 @@ function parseGeminiResponse(text) {
       keyPoints: Array.isArray(data.keyPoints) ? data.keyPoints : [],
       actionItems: Array.isArray(data.actionItems) ? data.actionItems : [],
       timestamps: Array.isArray(data.timestamps) ? data.timestamps : [],
+      sentiment: data.sentiment || { overall: "Neutral", reason: "" },
     };
   } catch (error) {
     console.error("JSON Parse Error:", error, "Raw text:", text);
@@ -109,6 +115,7 @@ function parseGeminiResponse(text) {
       keyPoints: [],
       actionItems: [],
       timestamps: [],
+      sentiment: { overall: "Neutral", reason: "Parsing failure" },
     };
   }
 }
@@ -164,7 +171,7 @@ export async function POST(request) {
 
     // Step 2: Summarize and extract key info
     const rawData = await summarizeTranscript(transcript);
-    const { summary, keyPoints, actionItems, timestamps } = parseGeminiResponse(rawData);
+    const { summary, keyPoints, actionItems, timestamps, sentiment } = parseGeminiResponse(rawData);
 
     // Step 3: Save to MongoDB
     await connectDB();
@@ -175,6 +182,7 @@ export async function POST(request) {
       keyPoints: keyPoints.length > 0 ? keyPoints : ["No key points identified."],
       actionItems: actionItems.length > 0 ? actionItems : ["No action items identified."],
       timestamps: timestamps.length > 0 ? timestamps : ["No specific highlights identified."],
+      sentiment,
       fileName,
       userId: decoded.userId,
     });
@@ -188,6 +196,7 @@ export async function POST(request) {
         keyPoints: meeting.keyPoints,
         actionItems: meeting.actionItems,
         timestamps: meeting.timestamps,
+        sentiment: meeting.sentiment,
         fileName: meeting.fileName,
         createdAt: meeting.createdAt,
       },

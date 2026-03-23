@@ -21,6 +21,10 @@ const MeetingSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  sentiment: {
+    overall: { type: String, default: "Neutral" },
+    reason: { type: String, default: "" },
+  },
   fileName: {
     type: String,
     default: "Untitled Meeting",
