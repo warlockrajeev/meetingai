@@ -17,6 +17,10 @@ const MeetingSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  timestamps: {
+    type: [String],
+    default: [],
+  },
   fileName: {
     type: String,
     default: "Untitled Meeting",

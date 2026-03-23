@@ -126,27 +126,42 @@ export default function HistoryPage() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Key Notes</h4>
+                        <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Highlights</h4>
                         <ul className="space-y-2">
-                          {meeting.keyPoints?.slice(0, 5).map((p, i) => (
-                            <li key={i} className="text-xs text-zinc-400 flex gap-2">
-                              <span className="text-primary">•</span>
-                              <span>{p}</span>
+                          {meeting.timestamps?.slice(0, 3).map((ts, i) => (
+                            <li key={i} className="text-[10px] text-zinc-400 flex items-center gap-2">
+                              <span className="font-mono bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800 text-zinc-500">{ts.split(" - ")[0]}</span>
+                              <span className="truncate">{ts.split(" - ")[1]}</span>
                             </li>
                           ))}
+                          {(!meeting.timestamps || meeting.timestamps.length === 0) && (
+                            <li className="text-[10px] text-zinc-600 italic">No highlights recorded</li>
+                          )}
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Next Steps</h4>
+                        <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Key Notes</h4>
                         <ul className="space-y-2">
-                          {meeting.actionItems?.slice(0, 5).map((a, i) => (
-                            <li key={i} className="text-xs text-zinc-400 flex gap-2">
-                              <span className="text-emerald-500">✓</span>
-                              <span>{a}</span>
+                          {meeting.keyPoints?.slice(0, 3).map((p, i) => (
+                            <li key={i} className="text-[10px] text-zinc-400 flex gap-2">
+                              <span className="text-primary">•</span>
+                              <span className="truncate">{p}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Next Steps</h4>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {meeting.actionItems?.slice(0, 4).map((a, i) => (
+                          <li key={i} className="text-[10px] text-zinc-400 flex gap-2">
+                            <span className="text-emerald-500">✓</span>
+                            <span className="truncate">{a}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
 
                     <div className="pt-4 flex justify-end">

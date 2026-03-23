@@ -56,35 +56,30 @@ async function transcribeMedia(base64Data, mimeType) {
 }
 
 /**
- * Summarize the transcript using Gemini.
+ * Summarize the transcript using Gemini and extract timestamps.
  */
 async function summarizeTranscript(transcript) {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-  const prompt = `You are an expert meeting analyst. Analyze the following meeting transcript and provide a structured summary.
+  const prompt = `You are an expert meeting analyst. Analyze the following meeting transcript and provide a structured JSON response.
 
 TRANSCRIPT:
 ${transcript}
 
-Please provide the output in EXACTLY this format (use these exact headers):
+You MUST return the response in the following JSON format ONLY. Do not include any text outside the JSON object.
 
-SUMMARY:
-[A concise 2-4 sentence summary of the meeting]
+FORMAT:
+{
+  "summary": "A concise 2-4 sentence summary of the meeting.",
+  "keyPoints": ["Key point 1", "Key point 2", "Key point 3"],
+  "actionItems": ["Action item 1", "Action item 2", "Action item 3"],
+  "timestamps": ["MM:SS - Introduction", "MM:SS - Main topic discussion", "MM:SS - Conclusion"]
+}
 
-KEY POINTS:
-- [Key point 1]
-- [Key point 2]
-- [Key point 3]
-(add more as needed)
-
-ACTION ITEMS:
-- [Action item 1]
-- [Action item 2]
-- [Action item 3]
-(add more as needed)
-
-If there are no clear action items, write "- No specific action items identified"
-If there are no clear key points, write "- No specific key points identified"`;
+RULES:
+- Provide 3-5 specific timestamps with descriptions based on the transcript's logical flow.
+- If there are no clear action items, use ["No specific action items identified"].
+- Ensure the JSON is valid and properly escaped.`;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
@@ -92,38 +87,30 @@ If there are no clear key points, write "- No specific key points identified"`;
 }
 
 /**
- * Parse the structured Gemini response into sections.
+ * Parse the JSON Gemini response.
  */
 function parseGeminiResponse(text) {
-  let summary = "";
-  let keyPoints = [];
-  let actionItems = [];
-
-  // Extract Summary
-  const summaryMatch = text.match(/SUMMARY:\s*([\s\S]*?)(?=KEY POINTS:|$)/i);
-  if (summaryMatch) {
-    summary = summaryMatch[1].trim();
+  try {
+    // Clean up potential markdown code blocks
+    const cleanJson = text.replace(/```json|```/g, "").trim();
+    const data = JSON.parse(cleanJson);
+    
+    return {
+      summary: data.summary || "No summary generated.",
+      keyPoints: Array.isArray(data.keyPoints) ? data.keyPoints : [],
+      actionItems: Array.isArray(data.actionItems) ? data.actionItems : [],
+      timestamps: Array.isArray(data.timestamps) ? data.timestamps : [],
+    };
+  } catch (error) {
+    console.error("JSON Parse Error:", error, "Raw text:", text);
+    // Fallback to empty structure if parsing fails
+    return {
+      summary: "Error parsing summary. The AI response was malformed.",
+      keyPoints: [],
+      actionItems: [],
+      timestamps: [],
+    };
   }
-
-  // Extract Key Points
-  const keyPointsMatch = text.match(/KEY POINTS:\s*([\s\S]*?)(?=ACTION ITEMS:|$)/i);
-  if (keyPointsMatch) {
-    keyPoints = keyPointsMatch[1]
-      .split("\n")
-      .map((line) => line.replace(/^[-*•]\s*/, "").trim())
-      .filter((line) => line.length > 0);
-  }
-
-  // Extract Action Items
-  const actionItemsMatch = text.match(/ACTION ITEMS:\s*([\s\S]*?)$/i);
-  if (actionItemsMatch) {
-    actionItems = actionItemsMatch[1]
-      .split("\n")
-      .map((line) => line.replace(/^[-*•]\s*/, "").trim())
-      .filter((line) => line.length > 0);
-  }
-
-  return { summary, keyPoints, actionItems };
 }
 
 export async function POST(request) {
@@ -176,8 +163,8 @@ export async function POST(request) {
     }
 
     // Step 2: Summarize and extract key info
-    const rawSummary = await summarizeTranscript(transcript);
-    const { summary, keyPoints, actionItems } = parseGeminiResponse(rawSummary);
+    const rawData = await summarizeTranscript(transcript);
+    const { summary, keyPoints, actionItems, timestamps } = parseGeminiResponse(rawData);
 
     // Step 3: Save to MongoDB
     await connectDB();
@@ -187,6 +174,7 @@ export async function POST(request) {
       summary: summary || "No summary generated.",
       keyPoints: keyPoints.length > 0 ? keyPoints : ["No key points identified."],
       actionItems: actionItems.length > 0 ? actionItems : ["No action items identified."],
+      timestamps: timestamps.length > 0 ? timestamps : ["No specific highlights identified."],
       fileName,
       userId: decoded.userId,
     });
@@ -199,6 +187,7 @@ export async function POST(request) {
         summary: meeting.summary,
         keyPoints: meeting.keyPoints,
         actionItems: meeting.actionItems,
+        timestamps: meeting.timestamps,
         fileName: meeting.fileName,
         createdAt: meeting.createdAt,
       },
